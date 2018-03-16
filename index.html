@@ -6,6 +6,21 @@
     <link href="vendor/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="vendor/twitter-bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="app.css" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyD0eNKhxVcsDyJ1SzFP4KoIvrc3T8REWCM",
+        authDomain: "othello-197921.firebaseapp.com",
+        databaseURL: "https://othello-197921.firebaseio.com",
+        projectId: "othello-197921",
+        storageBucket: "othello-197921.appspot.com",
+        messagingSenderId: "88237687602"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase-firestore.js"></script>
   </head>
   <body>
     <div class="navbar navbar-inverse">
@@ -15,7 +30,7 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="active"><a href=".">Home</a></li>
-              <li><a href="https://github.com/kana/othello-js">Code</a></li>
+              <li><a href="https://github.com/katiecs3/othello-js">Code</a></li>
             </ul>
           </div>
         </div>
@@ -83,6 +98,10 @@
           </label>
         </div>
         <button id="start-button" class="btn btn-primary" type="submit">Start a new game</button>
+
+        <button id="setup-arff" type='submit' class="btn btn-primary">Download .arff</button>
+        <br />
+  
       </div>
     </div>
 

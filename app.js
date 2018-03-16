@@ -1,6 +1,5 @@
 (function (O) {
   'use strict';
-
   // UI {{{1
 
   function drawGameBoard(board, player, moves) {
@@ -46,8 +45,6 @@
     $('.attackable').click(function(event) {
       var re = /\d/g;
       var move = event.currentTarget.id.match(re);
-      // console.log(move);
-      // console.log(move[0]);
       O.setLatestMove(move[0], move[1]);
     });
   }

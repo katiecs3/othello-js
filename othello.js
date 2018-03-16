@@ -4,6 +4,114 @@ var othello = {};
   'use strict';
 
   // Utilities {{{1
+  var db = firebase.firestore();
+
+  $('#setup-arff').click(function() {
+        var arff = `% 1. Title: Othello Data Set
+%
+% 2. Number of Instances: variable
+%
+% 3. Number of Attributes: 64 numeric, predictive attributes and the class
+%
+% 4. Attribute Information:
+%    1-64. single number from 1-4 representing the following:
+%       0 = empty
+%       1 = valid moves
+%       2 = white
+%       3 = black
+%    65. class:
+%       -- PASS
+%       -- point in form (x,y)
+%
+% 5. Missing Attribute Values: None
+
+@RELATION othello
+@ATTRIBUTE 0,0	{0, 1, 2, 3}
+@ATTRIBUTE 0,1	{0, 1, 2, 3}
+@ATTRIBUTE 0,2	{0, 1, 2, 3}
+@ATTRIBUTE 0,3	{0, 1, 2, 3}
+@ATTRIBUTE 0,4	{0, 1, 2, 3}
+@ATTRIBUTE 0,5	{0, 1, 2, 3}
+@ATTRIBUTE 0,6	{0, 1, 2, 3}
+@ATTRIBUTE 0,7	{0, 1, 2, 3}
+@ATTRIBUTE 1,0	{0, 1, 2, 3}
+@ATTRIBUTE 1,1	{0, 1, 2, 3}
+@ATTRIBUTE 1,2	{0, 1, 2, 3}
+@ATTRIBUTE 1,3	{0, 1, 2, 3}
+@ATTRIBUTE 1,4	{0, 1, 2, 3}
+@ATTRIBUTE 1,5	{0, 1, 2, 3}
+@ATTRIBUTE 1,6	{0, 1, 2, 3}
+@ATTRIBUTE 1,7	{0, 1, 2, 3}
+@ATTRIBUTE 2,0	{0, 1, 2, 3}
+@ATTRIBUTE 2,1	{0, 1, 2, 3}
+@ATTRIBUTE 2,2	{0, 1, 2, 3}
+@ATTRIBUTE 2,3	{0, 1, 2, 3}
+@ATTRIBUTE 2,4	{0, 1, 2, 3}
+@ATTRIBUTE 2,5	{0, 1, 2, 3}
+@ATTRIBUTE 2,6	{0, 1, 2, 3}
+@ATTRIBUTE 2,7	{0, 1, 2, 3}
+@ATTRIBUTE 3,0	{0, 1, 2, 3}
+@ATTRIBUTE 3,1	{0, 1, 2, 3}
+@ATTRIBUTE 3,2	{0, 1, 2, 3}
+@ATTRIBUTE 3,3	{0, 1, 2, 3}
+@ATTRIBUTE 3,4	{0, 1, 2, 3}
+@ATTRIBUTE 3,5	{0, 1, 2, 3}
+@ATTRIBUTE 3,6	{0, 1, 2, 3}
+@ATTRIBUTE 3,7	{0, 1, 2, 3}
+@ATTRIBUTE 4,0	{0, 1, 2, 3}
+@ATTRIBUTE 4,1	{0, 1, 2, 3}
+@ATTRIBUTE 4,2	{0, 1, 2, 3}
+@ATTRIBUTE 4,3	{0, 1, 2, 3}
+@ATTRIBUTE 4,4	{0, 1, 2, 3}
+@ATTRIBUTE 4,5	{0, 1, 2, 3}
+@ATTRIBUTE 4,6	{0, 1, 2, 3}
+@ATTRIBUTE 4,7	{0, 1, 2, 3}
+@ATTRIBUTE 5,0	{0, 1, 2, 3}
+@ATTRIBUTE 5,1	{0, 1, 2, 3}
+@ATTRIBUTE 5,2	{0, 1, 2, 3}
+@ATTRIBUTE 5,3	{0, 1, 2, 3}
+@ATTRIBUTE 5,4	{0, 1, 2, 3}
+@ATTRIBUTE 5,5	{0, 1, 2, 3}
+@ATTRIBUTE 5,6	{0, 1, 2, 3}
+@ATTRIBUTE 5,7	{0, 1, 2, 3}
+@ATTRIBUTE 6,0	{0, 1, 2, 3}
+@ATTRIBUTE 6,1	{0, 1, 2, 3}
+@ATTRIBUTE 6,2	{0, 1, 2, 3}
+@ATTRIBUTE 6,3	{0, 1, 2, 3}
+@ATTRIBUTE 6,4	{0, 1, 2, 3}
+@ATTRIBUTE 6,5	{0, 1, 2, 3}
+@ATTRIBUTE 6,6	{0, 1, 2, 3}
+@ATTRIBUTE 6,7	{0, 1, 2, 3}
+@ATTRIBUTE 7,0	{0, 1, 2, 3}
+@ATTRIBUTE 7,1	{0, 1, 2, 3}
+@ATTRIBUTE 7,2	{0, 1, 2, 3}
+@ATTRIBUTE 7,3	{0, 1, 2, 3}
+@ATTRIBUTE 7,4	{0, 1, 2, 3}
+@ATTRIBUTE 7,5	{0, 1, 2, 3}
+@ATTRIBUTE 7,6	{0, 1, 2, 3}
+@ATTRIBUTE 7,7	{0, 1, 2, 3}
+@ATTRIBUTE class 	{PASS,0-0,0-1,0-2,0-3,0-4,0-5,0-6,0-7,1-0,1-1,1-2,1-3,1-4,1-5,1-6,1-7,2-0,2-1,2-2,2-3,2-4,2-5,2-6,2-7,3-0,3-1,3-2,3-3,3-4,3-5,3-6,3-7,4-0,4-1,4-2,4-3,4-4,4-5,4-6,4-7,5-0,5-1,5-2,5-3,5-4,5-5,5-6,5-7,6-0,6-1,6-2,6-3,6-4,6-5,6-6,6-7,7-0,7-1,7-2,7-3,7-4,7-5,7-6,7-7}
+
+@DATA\n`
+
+        db.collection("gamestates").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            arff += `${doc.data().state}` + '\n';
+        });
+
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:application/octet-stream;charset=utf-16le;base64,' + btoa(arff));
+        element.setAttribute('download', 'othello.arff');
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+
+    });
+  });
 
   function memoize(f) {
     var memo = {};
@@ -59,7 +167,6 @@ var othello = {};
         gamestates['white'].push(board);
       else if(player == 'white')
         gamestates['black'].push(board);
-      // console.log(gamestates);
     }
   }
 
@@ -67,6 +174,15 @@ var othello = {};
     gamestates[player].forEach( function(s) {
       var prev = $('#gamestate').text();
       $('#gamestate').text(prev + '\n' + s);
+      db.collection("gamestates").add({
+          state: s,
+      })
+      .then(function(docRef) {
+          console.log("Document written with ID: ", docRef.id);
+      })
+      .catch(function(error) {
+          console.error("Error adding document: ", error);
+      });
     });
 
   }
