@@ -11,6 +11,8 @@
         attackable[O.ix(m.x, m.y)] = true;
     });
 
+    restructureData(board, moves, player);
+
     ss.push('<table>');
     for (var y = -1; y < O.N; y++) {
       ss.push('<tr>');
@@ -28,9 +30,9 @@
           ss.push('<span class="disc"></span>');
           ss.push('</td>');
         } else if (0 <= x && y === -1) {
-          ss.push('<th>' + String.fromCharCode('a'.charCodeAt(0)+x) + '</th>');
+          ss.push('<th>' + (x) + '</th>');
         } else if (x === -1 && 0 <= y) {
-          ss.push('<th>' + (y + 1) + '</th>');
+          ss.push('<th>' + (y) + '</th>');
         } else /* if (x === -1 && y === -1) */ {
           ss.push('<th></th>');
         }
@@ -41,6 +43,36 @@
 
     $('#game-board').html(ss.join(''));
     $('#current-player-name').text(player);
+    $('.attackable').click(function(event) {
+      var re = /\d/g;
+      var move = event.currentTarget.id.match(re);
+      // console.log(move);
+      // console.log(move[0]);
+      O.setLatestMove(move[0], move[1]);
+    });
+  }
+
+  function restructureData(board, moves, player) {
+    var newBoard = [];
+
+    board.forEach(function(space) {
+      if(space === "empty") {
+        newBoard.push(0);
+      } else if (space === "white") {
+        newBoard.push(2);
+      } else if (space === "black") {
+        newBoard.push(3);
+      }
+    });
+
+    moves.forEach(function(move) {
+      newBoard[((move.y) * 8) + move.x] = 1;
+    });
+
+    newBoard.push(O.getLatestMove());
+
+    O.saveGameState(newBoard, player)
+
   }
 
   function resetUI() {
@@ -74,11 +106,13 @@
       startNewGame();
   }
 
-  var minimumDelayForAI = 500;  // milliseconds
+  var minimumDelayForAI = 200;  // milliseconds
   function chooseMoveByAI(gameTree, ai) {
     $('#message').text('Now thinking...');
     setTimeout(
       function () {
+        var bestMove = ai.findTheBestMove(gameTree);
+        O.setLatestMove(bestMove.x, bestMove.y);
         var start = Date.now();
         var newGameTree = O.force(ai.findTheBestMove(gameTree).gameTreePromise);
         var end = Date.now();
@@ -149,12 +183,16 @@
   function recordStat(board) {
     var s = stats[[blackPlayerType(), whitePlayerType()]] || {b: 0, w: 0, d: 0};
     var r = O.judge(board);
-    if (r === 1)
+    if (r === 1) {
       s.b++;
+      O.printWinnerData('black')
+    }
     if (r === 0)
       s.d++;
-    if (r === -1)
+    if (r === -1) {
       s.w++;
+      O.printWinnerData('white')
+    }
     stats[[blackPlayerType(), whitePlayerType()]] = s;
   }
 

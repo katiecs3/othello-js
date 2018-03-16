@@ -48,8 +48,41 @@ var othello = {};
     return Math.floor(Math.random() * n);
   }
 
+  var gamestates = [];
+  gamestates['black'] = [];
+  gamestates['white'] = [];
+  var latestMove = "";
 
+  function saveGameState(board, player){
+    if(player !== '-') {
+      if(player == 'black')
+        gamestates['white'].push(board);
+      else if(player == 'white')
+        gamestates['black'].push(board);
+      // console.log(gamestates);
+    }
+  }
 
+  function printWinnerData(player) {
+    gamestates[player].forEach( function(s) {
+      var prev = $('#gamestate').text();
+      $('#gamestate').text(prev + '\n' + s);
+    });
+
+  }
+
+  function setLatestMove(x,y) {
+    if(x !== undefined && y !== undefined) {
+      latestMove = ( x + "-" + y );
+      // console.log(latestMove);
+    }
+  }
+
+  function getLatestMove(x, y) {
+    var latest = latestMove;
+    latestMove = "PASS"
+    return latest;
+  }
 
   // Core logic {{{1
 
@@ -955,7 +988,10 @@ var othello = {};
   othello.makeInitialGameTree = makeInitialGameTree;
   othello.nameMove = nameMove;
 
-
+  othello.saveGameState = saveGameState;
+  othello.printWinnerData = printWinnerData;
+  othello.setLatestMove = setLatestMove;
+  othello.getLatestMove = getLatestMove;
 
 
   // }}}
