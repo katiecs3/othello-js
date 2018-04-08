@@ -1,5 +1,7 @@
 var othello = {};
 
+var databaseName = "gamestates3";
+
 (function () {
   'use strict';
 
@@ -17,11 +19,12 @@ var othello = {};
 %    1-64. single number from 1-4 representing the following:
 %       0 = empty
 %       1 = valid moves
-%       2 = white
-%       3 = black
+%       2 = player
+%       3 = opponent
 %    65. class:
 %       -- PASS
-%       -- point in form (x,y)
+%       -- point in form x-y
+%    66. q-value: continuous
 %
 % 5. Missing Attribute Values: None
 
@@ -90,11 +93,12 @@ var othello = {};
 @ATTRIBUTE 7,5	{0, 1, 2, 3}
 @ATTRIBUTE 7,6	{0, 1, 2, 3}
 @ATTRIBUTE 7,7	{0, 1, 2, 3}
-@ATTRIBUTE class 	{PASS,0-0,0-1,0-2,0-3,0-4,0-5,0-6,0-7,1-0,1-1,1-2,1-3,1-4,1-5,1-6,1-7,2-0,2-1,2-2,2-3,2-4,2-5,2-6,2-7,3-0,3-1,3-2,3-3,3-4,3-5,3-6,3-7,4-0,4-1,4-2,4-3,4-4,4-5,4-6,4-7,5-0,5-1,5-2,5-3,5-4,5-5,5-6,5-7,6-0,6-1,6-2,6-3,6-4,6-5,6-6,6-7,7-0,7-1,7-2,7-3,7-4,7-5,7-6,7-7}
+@ATTRIBUTE move 	{PASS,0-0,0-1,0-2,0-3,0-4,0-5,0-6,0-7,1-0,1-1,1-2,1-3,1-4,1-5,1-6,1-7,2-0,2-1,2-2,2-3,2-4,2-5,2-6,2-7,3-0,3-1,3-2,3-3,3-4,3-5,3-6,3-7,4-0,4-1,4-2,4-3,4-4,4-5,4-6,4-7,5-0,5-1,5-2,5-3,5-4,5-5,5-6,5-7,6-0,6-1,6-2,6-3,6-4,6-5,6-6,6-7,7-0,7-1,7-2,7-3,7-4,7-5,7-6,7-7}
+@ATTRIBUTE class continuous
 
 @DATA\n`
 
-        db.collection("gamestates").get().then((querySnapshot) => {
+        db.collection(databaseName).get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             arff += `${doc.data().state}` + '\n';
         });
@@ -159,45 +163,106 @@ var othello = {};
   var gamestates = [];
   gamestates['black'] = [];
   gamestates['white'] = [];
-  var latestMove = "";
+  var latestGamestate = [];
+  var latestPlayer = [];
 
-  function saveGameState(board, player){
-    if(player !== '-') {
-      if(player == 'black')
-        gamestates['white'].push(board);
-      else if(player == 'white')
-        gamestates['black'].push(board);
-    }
-  }
+  function recordData(winner) {
 
-  function printWinnerData(player) {
-    gamestates[player].forEach( function(s) {
-      var prev = $('#gamestate').text();
-      $('#gamestate').text(prev + '\n' + s);
-      db.collection("gamestates").add({
-          state: s,
-      })
-      .then(function(docRef) {
-          console.log("Document written with ID: ", docRef.id);
-      })
-      .catch(function(error) {
-          console.error("Error adding document: ", error);
+    var penalty = -100;
+    if(winner === "draw") {
+      gamestates['black'].reverse().forEach( function(state) {
+        state.push('draw');
+        penalty *= .95;
+        var prev = $('#gamestate').text();
+        $('#gamestate').text(prev + '\n' + state);
+        db.collection(databaseName).add({
+            state: state,
+        })
+        .then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+        })
+        .catch(function(error) {
+            console.error("Error adding document: ", error);
+        });
       });
-    });
+      gamestates['white'].reverse().forEach( function(state) {
+        state.push('draw');
+        penalty *= .95;
+        var prev = $('#gamestate').text();
+        $('#gamestate').text(prev + '\n' + state);
+        db.collection(databaseName).add({
+            state: state,
+        })
+        .then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+        })
+        .catch(function(error) {
+            console.error("Error adding document: ", error);
+        });
+      });
+    } else {
+      var loser = (winner === "black") ? "white" : "black";
+
+      var reward = 100;
+      gamestates[winner].reverse().forEach( function(state) {
+        state.push(reward);
+        reward *= .95;
+        var prev = $('#gamestate').text();
+        $('#gamestate').text(prev + '\n' + state);
+        db.collection(databaseName).add({
+            state: state,
+        })
+        .then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+        })
+        .catch(function(error) {
+            console.error("Error adding document: ", error);
+        });
+      });
+
+      var penalty = -100
+      gamestates[loser].reverse().forEach( function(state) {
+        state.push(penalty);
+        penalty *= .95;
+        var prev = $('#gamestate').text();
+        $('#gamestate').text(prev + '\n' + state);
+        db.collection(databaseName).add({
+            state: state,
+        })
+        .then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+        })
+        .catch(function(error) {
+            console.error("Error adding document: ", error);
+        });
+      });
+    }
+
+    gamestates['black'] = [];
+    gamestates['white'] = [];
+    latestGamestate = [];
+    latestPlayer = [];
 
   }
 
-  function setLatestMove(x,y) {
-    if(x !== undefined && y !== undefined) {
-      latestMove = ( x + "-" + y );
-      // console.log(latestMove);
+  function saveGameState(x,y) {
+
+    var latestMove = (x !== undefined && y !== undefined) ? latestMove = ( x + "-" + y ) : "PASS";
+
+    latestGamestate.push(latestMove);
+
+    if(latestPlayer !== '-') {
+      if(latestPlayer == 'black')
+        gamestates['white'].push(latestGamestate);
+      else if(latestPlayer == 'white')
+        gamestates['black'].push(latestGamestate);
     }
   }
 
-  function getLatestMove(x, y) {
-    var latest = latestMove;
-    latestMove = "PASS"
-    return latest;
+  function setLatestGamestate(board, player) {
+
+    latestGamestate = board;
+    latestPlayer = player;
   }
 
   // Core logic {{{1
@@ -1105,9 +1170,8 @@ var othello = {};
   othello.nameMove = nameMove;
 
   othello.saveGameState = saveGameState;
-  othello.printWinnerData = printWinnerData;
-  othello.setLatestMove = setLatestMove;
-  othello.getLatestMove = getLatestMove;
+  othello.recordData = recordData;
+  othello.setLatestGamestate = setLatestGamestate;
 
 
   // }}}

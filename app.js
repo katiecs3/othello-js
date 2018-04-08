@@ -10,8 +10,6 @@
         attackable[O.ix(m.x, m.y)] = true;
     });
 
-    restructureData(board, moves, player);
-
     ss.push('<table>');
     for (var y = -1; y < O.N; y++) {
       ss.push('<tr>');
@@ -45,8 +43,10 @@
     $('.attackable').click(function(event) {
       var re = /\d/g;
       var move = event.currentTarget.id.match(re);
-      O.setLatestMove(move[0], move[1]);
+      O.saveGameState(move[0], move[1]);
     });
+
+    restructureData(board, moves, player);
   }
 
   function restructureData(board, moves, player) {
@@ -56,9 +56,21 @@
       if(space === "empty") {
         newBoard.push(0);
       } else if (space === "white") {
-        newBoard.push(2);
+
+        if(player === 'white') {
+          newBoard.push(2);
+        } else {
+          newBoard.push(3);
+        }
+
       } else if (space === "black") {
-        newBoard.push(3);
+
+        if(player === 'black') {
+          newBoard.push(2);
+        } else {
+          newBoard.push(3);
+        }
+
       }
     });
 
@@ -66,9 +78,7 @@
       newBoard[((move.y) * 8) + move.x] = 1;
     });
 
-    newBoard.push(O.getLatestMove());
-
-    O.saveGameState(newBoard, player)
+    O.setLatestGamestate(newBoard, player);
 
   }
 
@@ -109,7 +119,7 @@
     setTimeout(
       function () {
         var bestMove = ai.findTheBestMove(gameTree);
-        O.setLatestMove(bestMove.x, bestMove.y);
+        O.saveGameState(bestMove.x, bestMove.y);
         var start = Date.now();
         var newGameTree = O.force(ai.findTheBestMove(gameTree).gameTreePromise);
         var end = Date.now();
@@ -182,13 +192,14 @@
     var r = O.judge(board);
     if (r === 1) {
       s.b++;
-      O.printWinnerData('black')
+      O.recordData('black')
     }
     if (r === 0)
       s.d++;
+      O.recordData('draw')
     if (r === -1) {
       s.w++;
-      O.printWinnerData('white')
+      O.recordData('white');
     }
     stats[[blackPlayerType(), whitePlayerType()]] = s;
   }
