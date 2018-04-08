@@ -1,6 +1,6 @@
 var othello = {};
 
-var databaseName = "gamestates3";
+var databaseName = "gamestates4";
 
 (function () {
   'use strict';
@@ -168,10 +168,11 @@ var databaseName = "gamestates3";
 
   function recordData(winner) {
 
-    var penalty = -100;
+
     if(winner === "draw") {
+      var penalty = -100;
       gamestates['black'].reverse().forEach( function(state) {
-        state.push('draw');
+        state.push(penalty);
         penalty *= .95;
         var prev = $('#gamestate').text();
         $('#gamestate').text(prev + '\n' + state);
@@ -185,8 +186,9 @@ var databaseName = "gamestates3";
             console.error("Error adding document: ", error);
         });
       });
+      penalty = -100;
       gamestates['white'].reverse().forEach( function(state) {
-        state.push('draw');
+        state.push(penalty);
         penalty *= .95;
         var prev = $('#gamestate').text();
         $('#gamestate').text(prev + '\n' + state);
