@@ -63,7 +63,8 @@
           <label>
             Black:
             <select id="black-player-type">
-              <option value="human" selected>Human</option>
+              <option value="qLearn" selected> Neural Net (Q-Learn)</option>              
+              <option value="human">Human</option>
               <option value="simpleCount-131072">AI (Type A; try to get many disks)</option>
               <option value="basic-131072">AI (Type B; try to own corner positions)</option>
               <option value="better-131072">AI (Type C; try to own corner positions carefully)</option>
@@ -83,10 +84,11 @@
           <label>
             White:
             <select id="white-player-type">
+              <option value="qLearn" selected> Neural Net (Q-Learn)</option>
               <option value="human">Human</option>
               <option value="simpleCount-131072">AI (Type A; try to get many disks)</option>
               <option value="basic-131072">AI (Type B; try to own corner positions)</option>
-              <option value="better-131072" selected>AI (Type C; try to own corner positions carefully)</option>
+              <option value="better-131072">AI (Type C; try to own corner positions carefully)</option>
               <option value="moveCount-131072">AI (Type D; Prioritize number of moves)</option>
               <option value="moveCountAndPositions-131072">AI (Type E; Prioritize number of moves and positions)</option>
               <option value="mcts-128">AI (Type M-128; Monte Carlo Tree Search with 128 iterations)</option>
