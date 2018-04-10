@@ -1,12 +1,14 @@
 ﻿// Your code here!
 
 var isRunning = false;
-var setSettingsString = 'Set Settings'; 
+var isPlaying = false;
+var setSettingsString = 'Set Settings';
 var pulsed = false;
 var closeNow = false;
-var generationOn = true;
+var generationOn = false;
 var winPercentageOn = false;
 var pulseOn = false;
+var closePlayNow = false;
 
 window.onload = function () {
     document.getElementById("train").onclick = function (evt) {
@@ -14,6 +16,12 @@ window.onload = function () {
     };
     document.getElementById("terminate").onclick = function (evt) {
         terminate();
+    };
+    document.getElementById("play").onclick = function (evt) {
+        usrPlay();
+    };
+    document.getElementById("terminatePlay").onclick = function (evt) {
+        usrStopPlay();
     };
     document.getElementById("pulse").onclick = function (evt) {
         togglePulse();
@@ -27,7 +35,7 @@ window.onload = function () {
 };
 function run() {
     document.getElementById("output0").innerHTML = 'Training Started!';
-    if (!isRunning) {
+    if (!isRunning && !isPlaying) {
         isRunning = true;
         oneBatchRun();
     }
@@ -87,6 +95,23 @@ function processTrainingData() {
 }
 function save() {
 
+}
+function usrPlay() {
+    if (!isRunning && !isPlaying) {
+        document.getElementById("output0").innerHTML = 'User play activated!';
+        isPlaying = true;
+        closePlayNow = false;
+    }
+    else {
+        document.getElementById("output0").innerHTML = 'Game Already Running';
+    }
+}
+function usrStopPlay() {
+    if (isPlaying) {
+        document.getElementById("output0").innerHTML = 'User play TERMINATED!';
+        isPlaying = false;
+        closePlayNow = true;
+    }
 }
 //END TO DO
 var pulseDelay = 100;
