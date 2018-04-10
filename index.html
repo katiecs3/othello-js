@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -36,6 +36,19 @@
         </div>
       </div>
     </div>
+    <p>Matthew Tays presents: The app</p>
+    <button id="run">Run App</button>
+    <button id="terminate">Terminate</button>
+    <p id="space"></p>
+    <button id="pulse">Pulse</button>
+    <button id="displayPercentage">Display Win Percentage</button>
+    <button id="displayGeneration">Display Generation</button>
+    <p id="output0"><br /></p><!-- System out Messages (Like Terminate)-->
+    <p id="output1"><br /></p><!-- Debugging Messages  document.getElementById("output1").innerHTML = YOUR MESSAGE-->
+    <p id="output2"><br /></p><!-- Debugging Messages -->
+    <p id="generationOutput"><br /></p>
+    <p id="winPercentageOutput"><br /></p>
+    <p id="pulseOutput"><br /></p>
 
     <div id="main" class="container">
       <div id="game-board"></div>
@@ -111,5 +124,6 @@
     <script src="vendor/twitter-bootstrap/js/bootstrap.min.js"></script>
     <script src="othello.js"></script>
     <script src="app.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
