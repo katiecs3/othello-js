@@ -148,11 +148,11 @@ var app = {};
 
   var playerTable = {};
 
-  function makePlayer(playerType) {
+  function makePlayer(playerType, model) {
     if (playerType === 'human') {
       return setUpUIToChooseMove;
     } else {
-      var ai = O.makeAI(playerType);
+      var ai = O.makeAI(playerType, model);
       return function (gameTree) {
         chooseMoveByAI(gameTree, ai);
       };
@@ -226,13 +226,23 @@ var app = {};
     shiftToNewGameTree(O.makeInitialGameTree());
   }
 
-  // Startup {{{1
+  function startNewGameTrain(model) {
+    $('#preference-pane :input:not(#repeat-games)')
+      .addClass('disabled')
+      .attr('disabled', 'disabled');
+    playerTable[O.BLACK] = makePlayer(blackPlayerType(), model);
+    playerTable[O.WHITE] = makePlayer(whitePlayerType(), model);
+    shiftToNewGameTree(O.makeInitialGameTree());
+  }
 
+  // Startup {{{1
   $('#start-button').click(function () {startNewGame();});
   $('#add-new-ai-button').click(function () {O.addNewAI();});
   $('#swap-player-types-button').click(function () {swapPlayerTypes();});
   resetGame();
   drawGameBoard(O.makeInitialGameBoard(), '-', []);
+
+  app.startNewGameTrain = startNewGameTrain
 
   //}}}
 })(othello);

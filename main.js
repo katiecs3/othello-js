@@ -88,7 +88,8 @@ function runGameSync() {
 
 //TO DO
 function executeGame() {
-   othello.startNewGame(); 
+   model = null;
+   app.startNewGameTrain(model);
 }
 function processTrainingData() {
 
