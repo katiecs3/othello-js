@@ -1,3 +1,5 @@
+var app = {};
+
 (function (O) {
   'use strict';
   // UI {{{1
