@@ -744,9 +744,9 @@ var databaseName = "gamestates4";
     pmc: makePrimitiveMonteCarloBasedAI
   };
 
-  function makeAI(playerType) {
+  function makeAI(playerType, model) {
     if (playerType === "qLearn"){
-      return makeQLearnerAI()
+      return makeQLearnerAI(model);
     }
     else if (playerType in externalAITable) {
       return externalAITable[playerType];
@@ -774,7 +774,7 @@ var databaseName = "gamestates4";
   // Q-Learn Neural Net AI
 
   function qScore(board, move, player) {
-    var possibleMove = (x !== undefined && y !== undefined) ? possibleMove = ( x + "-" + y ) : "PASS";
+    var possibleMove = (x !== undefined && y !== undefined) ? ( x + "-" + y ) : "PASS";
 
     var newBoard = [];
 
@@ -807,9 +807,9 @@ var databaseName = "gamestates4";
     return neuralNet.predict(newBoard);
   }
 
-  function makeQLearnerAI(){
+  function makeQLearnerAI(model){
     //TODO: Add the code to load the Neural Net from firebase in here.
-    neuralNet = null;
+    neuralNet = model;
 
     return{
       findTheBestMove: function (gameTree) {
