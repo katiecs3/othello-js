@@ -192,11 +192,11 @@
     var r = O.judge(board);
     if (r === 1) {
       s.b++;
-      O.recordData('black')
+      O.recordData('black');
     }
     if (r === 0)
       s.d++;
-      O.recordData('draw')
+      O.recordData('draw');
     if (r === -1) {
       s.w++;
       O.recordData('white');
@@ -224,9 +224,6 @@
     shiftToNewGameTree(O.makeInitialGameTree());
   }
 
-
-
-
   // Startup {{{1
 
   $('#start-button').click(function () {startNewGame();});
@@ -234,9 +231,6 @@
   $('#swap-player-types-button').click(function () {swapPlayerTypes();});
   resetGame();
   drawGameBoard(O.makeInitialGameBoard(), '-', []);
-
-
-
 
   //}}}
 })(othello);
