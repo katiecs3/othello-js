@@ -746,7 +746,10 @@ var databaseName = "gamestates4";
   };
 
   function makeAI(playerType) {
-    if (playerType in externalAITable) {
+    if (playerType === "qLearn"){
+      return makeQLearnerAI()
+    }
+    else if (playerType in externalAITable) {
       return externalAITable[playerType];
     } else {
       var tokens = playerType.split('-');
@@ -769,6 +772,31 @@ var databaseName = "gamestates4";
   }
 
 
+  // Q-Learn Neural Net AI
+
+  function qScore(board, move, player) {
+    var possibleMove = (x !== undefined && y !== undefined) ? possibleMove = ( x + "-" + y ) : "PASS";
+
+    var inputData = board.slice(0, 64);
+    inputData.push(possibleMove);
+    return neuralNet.predict(inputData);
+  }
+
+  function makeQLearnerAI(){
+    //TODO: Add the code to load the Neural Net from firebase in here.
+    neuralNet = null;
+
+    return{
+      findTheBestMove: function (gameTree) {
+        var scores =
+          gameTree.moves.map(function (m) {
+            return qScore(gameTree.board, m, gameTree.player);
+          });
+        var maxScore = Math.max.apply(null, scores);
+        return gameTree.moves[scores.indexOf(maxScore)]
+        }
+    }
+  }
 
 
   // AI: Weight table based + alpha-beta pruning {{{1
@@ -1174,6 +1202,8 @@ var databaseName = "gamestates4";
   othello.saveGameState = saveGameState;
   othello.recordData = recordData;
   othello.setLatestGamestate = setLatestGamestate;
+
+  othello.neuralNet = null;
 
 
   // }}}
