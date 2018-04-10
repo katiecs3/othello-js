@@ -777,9 +777,35 @@ var databaseName = "gamestates4";
   function qScore(board, move, player) {
     var possibleMove = (x !== undefined && y !== undefined) ? possibleMove = ( x + "-" + y ) : "PASS";
 
-    var inputData = board.slice(0, 64);
-    inputData.push(possibleMove);
-    return neuralNet.predict(inputData);
+    var newBoard = [];
+
+    board.forEach(function(space) {
+      if(space === "empty") {
+        newBoard.push(0);
+      } else if (space === "white") {
+
+        if(player === 'white') {
+          newBoard.push(2);
+        } else {
+          newBoard.push(3);
+        }
+
+      } else if (space === "black") {
+
+        if(player === 'black') {
+          newBoard.push(2);
+        } else {
+          newBoard.push(3);
+        }
+
+      }
+    });
+
+    moves.forEach(function(move) {
+      newBoard[((move.y) * 8) + move.x] = 1;
+    });
+    newBoard.push(possibleMove);
+    return neuralNet.predict(newBoard);
   }
 
   function makeQLearnerAI(){
