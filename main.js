@@ -21,12 +21,6 @@ window.onload = function () {
     document.getElementById("terminate").onclick = function (evt) {
         terminate();
     };
-    document.getElementById("play").onclick = function (evt) {
-        usrPlay();
-    };
-    document.getElementById("terminatePlay").onclick = function (evt) {
-        usrStopPlay();
-    };
     document.getElementById("pulse").onclick = function (evt) {
         togglePulse();
     };
@@ -112,24 +106,6 @@ function processTrainingData() {
 
 function save() {
 
-}
-
-function usrPlay() {
-    if (!isRunning && !isPlaying) {
-        document.getElementById("output0").innerHTML = 'User play activated!';
-        isPlaying = true;
-        closePlayNow = false;
-    }
-    else {
-        document.getElementById("output0").innerHTML = 'Game Already Running';
-    }
-}
-function usrStopPlay() {
-    if (isPlaying) {
-        document.getElementById("output0").innerHTML = 'User play TERMINATED!';
-        isPlaying = false;
-        closePlayNow = true;
-    }
 }
 //END TO DO
 var pulseDelay = 100;
