@@ -36,15 +36,7 @@
         </div>
       </div>
     </div>
-    <p>Matthew Tays presents: The app</p>
-    <button id="train">Train</button>
-    <button id="terminate">Terminate</button>
-    <button id="play">Play</button>
-    <button id="terminatePlay">Stop Playing</button>
-    <p id="space"></p>
-    <button id="pulse">Pulse</button>
-    <button id="displayPercentage">Display Win Percentage</button>
-    <button id="displayGeneration">Display Generation</button>
+
     <p id="output0"><br /></p><!-- System out Messages (Like Terminate)-->
     <p id="output1"><br /></p><!-- Debugging Messages  document.getElementById("output1").innerHTML = YOUR MESSAGE-->
     <p id="output2"><br /></p><!-- Debugging Messages -->
@@ -63,7 +55,7 @@
           <label>
             Black:
             <select id="black-player-type">
-              <option value="qLearn" selected> Neural Net (Q-Learn)</option>              
+              <option value="qLearn" selected> Neural Net (Q-Learn)</option>
               <option value="human">Human</option>
               <option value="simpleCount-131072">AI (Type A; try to get many disks)</option>
               <option value="basic-131072">AI (Type B; try to own corner positions)</option>
@@ -118,7 +110,14 @@
 
         <button id="setup-arff" type='submit' class="btn btn-primary">Download .arff</button>
         <br />
-  
+
+        <button id="train">Start Train</button>
+        <button id="terminate">End Train</button>
+        <p id="space"></p>
+        <button id="pulse">Pulse</button>
+        <button id="displayPercentage">Display Win Percentage</button>
+        <button id="displayGeneration">Display Generation</button>
+
       </div>
     </div>
 

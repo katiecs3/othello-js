@@ -168,7 +168,6 @@ var databaseName = "gamestates4";
 
   function recordData(winner) {
 
-
     if(winner === "draw") {
       var penalty = -100;
       gamestates['black'].reverse().forEach( function(state) {
