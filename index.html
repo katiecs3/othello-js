@@ -37,13 +37,6 @@
       </div>
     </div>
 
-    <p id="output0"><br /></p><!-- System out Messages (Like Terminate)-->
-    <p id="output1"><br /></p><!-- Debugging Messages  document.getElementById("output1").innerHTML = YOUR MESSAGE-->
-    <p id="output2"><br /></p><!-- Debugging Messages -->
-    <p id="generationOutput"><br /></p>
-    <p id="winPercentageOutput"><br /></p>
-    <p id="pulseOutput"><br /></p>
-
     <div id="main" class="container">
       <div id="game-board"></div>
       <div id="current-player">Current player: <span id="current-player-name">-</span></div>
@@ -109,17 +102,24 @@
         <button id="start-button" class="btn btn-primary" type="submit">Start a new game</button>
 
         <button id="setup-arff" type='submit' class="btn btn-primary">Download .arff</button>
-        <br />
+        <p id="space"></p>
 
         <button id="train">Start Train</button>
         <button id="terminate">End Train</button>
-        <p id="space"></p>
         <button id="pulse">Pulse</button>
         <button id="displayPercentage">Display Win Percentage</button>
         <button id="displayGeneration">Display Generation</button>
 
       </div>
     </div>
+
+    <p id="output0"><br /></p><!-- System out Messages (Like Terminate)-->
+    <p id="output1"><br /></p><!-- Debugging Messages  document.getElementById("output1").innerHTML = YOUR MESSAGE-->
+    <p id="output2"><br /></p><!-- Debugging Messages -->
+    <p id="generationOutput"><br /></p>
+    <p id="winPercentageOutput"><br /></p>
+    <p id="pulseOutput"><br /></p>
+
 
     <div id="gamestate" style="margin-left: 15em; padding-top: 5em;"></div>
 

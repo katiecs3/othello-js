@@ -88,11 +88,7 @@ function runGameSync() {
 
 //TO DO
 function executeGame() {
-    var j = 0;
-    for (var i = 0; i < 10; ++i) {
-        ++j
-        //Spin wheels
-    }
+   othello.startNewGame(); 
 }
 function processTrainingData() {
 
