@@ -9,6 +9,10 @@ var generationOn = false;
 var winPercentageOn = false;
 var pulseOn = false;
 var closePlayNow = false;
+var model;
+
+model = new NeuralNetLearner();
+createOrLoadModel();
 
 window.onload = function () {
     document.getElementById("train").onclick = function (evt) {
@@ -27,6 +31,17 @@ window.onload = function () {
         toggleGeneration();
     };
 };
+
+function createOrLoadModel() {
+    if (not in database)
+      // parameters: input, output, hidden layers, activation function, learning rate
+      model.createModel(65, 1, [65, 65], 'sigmoid', 0.3);
+    else {
+      jsonString = get from database;
+      model.loadFromJsonString(jsonString);
+    }  
+}
+
 function run() {
     document.getElementById("output0").innerHTML = 'Training Started!';
     if (!isRunning && !isPlaying) {
@@ -84,12 +99,13 @@ function runGameSync() {
 
 //TO DO
 function executeGame() {
-   model = null;
    app.startNewGameTrain(model);
 }
+
 function processTrainingData() {
 
 }
+
 function save() {
 
 }
