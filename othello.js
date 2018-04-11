@@ -775,8 +775,9 @@ var databaseName = "gamestates4";
 
   // Q-Learn Neural Net AI
 
-  function qScore(board, move, player) {
-    var possibleMove = (x !== undefined && y !== undefined) ? ( x + "-" + y ) : "PASS";
+  function qScore(board, possibleMoves, move, player, neuralNet) {
+
+    var possibleMove = (typeof move.x !== 'undefined' && typeof move.y !== 'undefined') ? ( move.x + "-" + move.y ) : "PASS";
 
     var newBoard = [];
 
@@ -802,26 +803,41 @@ var databaseName = "gamestates4";
       }
     });
 
-    moves.forEach(function(move) {
+    possibleMoves.forEach(function(move) {
       newBoard[((move.y) * 8) + move.x] = 1;
     });
+
     newBoard.push(possibleMove);
     return neuralNet.predict(newBoard);
   }
 
   function makeQLearnerAI(model){
-    //TODO: Add the code to load the Neural Net from firebase in here.
-    neuralNet = model;
-
     return{
       findTheBestMove: function (gameTree) {
-        var scores =
+
+        var potentialMoves =
           gameTree.moves.map(function (m) {
-            return qScore(gameTree.board, m, gameTree.player);
+            return qScore(gameTree.board, gameTree.moves, m, gameTree.player, model);
           });
-        var maxScore = Math.max.apply(null, scores);
-        return gameTree.moves[scores.indexOf(maxScore)]
+
+        var scores = potentialMoves.map(function(move) {
+          return move[65];
+        })
+
+        var maxScoreIndex = Math.max(...scores);
+        var bestMove = potentialMoves[scores.indexOf(maxScoreIndex)][64];
+
+        if( bestMove == "PASS") {
+          return gameTree.moves[0];
+        } else {
+          return gameTree.moves.find((move) => {
+            if(move.x == bestMove[0] && move.y == bestMove[2]) {
+              return move;
+            }
+          });
         }
+
+      }
     }
   }
 

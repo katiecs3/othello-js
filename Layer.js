@@ -28,9 +28,9 @@ class Layer {
 		//Bias node always outputs 1
 		this.myOutput[this.numNodes] = 1;
 		this.myError = new Array(this.numNodes);
-		initializeWeights();
+		this.initializeWeights();
 	}
-	
+
 	/**
 	 * @return Number of nodes in this layer, including bias node
 	 */
@@ -38,21 +38,21 @@ class Layer {
 		// Add one to account for bias node
 		return numNodes + 1;
 	}
-	
+
 	/**
 	 * Sigmoid activation function
 	 */
 	sigmoid(net) {
 		return 1/(1 + Math.pow(Math.E, (net * -1)));
 	}
-	
+
 	/**
 	 * Derivative of sigmoid activation function
 	 */
 	derivativeSigmoid(out) {
 		return out * (1 - out);
 	}
-	
+
 	/**
 	 * Initializes weights from all nodes of previous layer to all nodes in
 	 *  this layer, assuming full conenction. Initialization is random
@@ -70,7 +70,7 @@ class Layer {
 			this.weights.push(nodeWeights);
 		}
 	}
-	
+
 	/**
 	 * Prepare output of nodes of this layer given input from previous layer
 	 * @param error Array of output from nodes of previous layer
@@ -96,7 +96,7 @@ class Layer {
 		}
 		return this.myOutput;
 	}
-	
+
 	/**
 	 * Get output without changing the input
 	 * @return Array of output from nodes in this layer
@@ -104,7 +104,7 @@ class Layer {
 	getOutput() {
 		return this.myOutput;
 	}
-	
+
 	/**
 	 * Calculates part of the target for the previous layer given the same from
 	 *  the next layer. For output layer, this should be the output minus
@@ -119,7 +119,7 @@ class Layer {
 			console.log("Unexpected number of inputs");
 			return null;
 		}
-		
+
 		// The error for each node in this layer is it's target
 		for (let n = 0; n < this.numNodes; n++) {
 			let nodeError = target[n];
@@ -127,7 +127,7 @@ class Layer {
 			nodeError *= derivative(this.myOutput[n]);
 			this.myError[n] = nodeError;
 		}
-		
+
 		// Find target of previous layer using the weights
 		let previousLayerTarget = [];
 		for (let i = 0; i < this.numInputs; i++) {
@@ -140,7 +140,7 @@ class Layer {
 		}
 		return previousLayerTarget;
 	}
-	
+
 	/**
 	 * Adjust weights of this layer according to output of input layer. It is
 	 *  HIGHLY recommended that this be used only after backpropagating error
@@ -154,7 +154,7 @@ class Layer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Calculates and returns the SSE in the current layer
 	 * @return SSE in the current layer

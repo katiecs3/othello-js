@@ -4,7 +4,7 @@
  */
 
 class NeuralNetLearner {
-	
+
 	/**
 	 * Initializes model as null. Must use createModel() or loadModel() before other functions.
 	 */
@@ -12,7 +12,7 @@ class NeuralNetLearner {
 		this.model = null;
 		this.validationSet = null;
 	}
-	
+
 	/**
 	 * Creates and initializes the learning model
 	 * @param learningRate Learning rate for the model
@@ -30,10 +30,10 @@ class NeuralNetLearner {
 		for(let l = 0; l < layers.length; l++) {
 			let layer = new Layer(inputs[l], layers[l], activationFunction, learningRate);
 			layer.initializeWeights();
-			model.push(layer);
+			this.model.push(layer);
 		}
 	}
-	
+
 	/**
 	 * Trains on some number of features given the expected labels. Model must
 	 *  be initialized with createModel() or loaded with loadModel() prior to
@@ -51,28 +51,28 @@ class NeuralNetLearner {
 			console.log("Training requires that each feature set have matching labels")
 			return;
 		}
-		
+
 		let epochs = 0;
 		let continueTrain = true;
 		let bestSSE = Infinity;
 		let epochsSinceImprovement = 0;
 		let noImprovementThreshold = 5;
 		let bestModel = null;
-		
+
 		console.log("Training begin")
 		let startTime = Date.now();
 		while(continueTrain) {
 			// Train on each instance of the training set
 			let SSE = 0;
 			for (let f = 0; f < features; f++) {
-				getModelOutput(features[f]);
-				SSE += calculateSSE(labels[f], true);
+				this.getModelOutput(features[f]);
+				SSE += this.calculateSSE(labels[f], true);
 			}
-			
+
 			// Test stopping criteria
 			epochs++;
 			if (this.validationSet != null) {
-				let validationSSE = validate();
+				let validationSSE = this.validate();
 				if (validationSSE < bestSSE) {
 					epochsSinceSSE = 0;
 					bestSSE = validationSSE;
@@ -90,14 +90,14 @@ class NeuralNetLearner {
 				if (epochs > 50)
 					continueTrain = false;
 			}
-			
+
 			// Report epoch
 			console.log("  Finished epoch " + epochs + ", SSE: " + SSE);
-			
+
 		}
 		console.log("Training ended after " + (Date.now() - startTime)/1000 + " seconds")
 	}
-	
+
 	/**
 	 * Gets model output for a single instance
 	 * @param features Values for each attribute of an instance, without labels
@@ -111,7 +111,7 @@ class NeuralNetLearner {
 		}
 		return layerOutput;
 	}
-	
+
 	/**
 	 * Calculates SSE in model for the current instance
 	 * @param target Array of the expected output of the model
@@ -129,7 +129,7 @@ class NeuralNetLearner {
 		}
 		return SSE;
 	}
-	
+
 	/**
 	 * Predicts output of given instance based on training
 	 * @param features Array representing a single instance, with a value for each attribute
@@ -140,10 +140,10 @@ class NeuralNetLearner {
 			console.log("Model has not been initialized or loaded")
 			return;
 		}
-		
-		return getModelOutput(features);
+
+		return this.getModelOutput(features);
 	}
-	
+
 	/**
 	 * Add a validation set to use as stopping criteria
 	 * @param features Array of validation instances, each of which is an array with a value for each attribute
@@ -155,12 +155,12 @@ class NeuralNetLearner {
 			console.log("Training requires that each feature set have matching labels");
 			return;
 		}
-		
+
 		this.validationSet = {};
 		this.validationSet.features = features;
 		this.validationSet.labels = labels;
 	}
-	
+
 	/**
 	 * Tests the learner on the validation set and finds the SSE
 	 * @return The total SSE for a single epoch using the validation set
@@ -170,20 +170,20 @@ class NeuralNetLearner {
 		let labels = this.validationSet.labels;
 		let SSE = 0;
 		for (let f = 0; f < features; f++) {
-			getModelOutput(features[f]);
-			SSE += calculateSSE(labels[f], true);
+			this.getModelOutput(features[f]);
+			SSE += this.calculateSSE(labels[f], true);
 		}
 		return SSE;
 	}
-	
-	
+
+
 	/**
 	 * Returns model
 	 */
 	getModel() {
 		return this.model;
 	}
-	
+
 	/**
 	 * Converts model to json string and then returns it
 	 * @return Model as a json string
@@ -195,7 +195,7 @@ class NeuralNetLearner {
 		}
 		return JSON.stringify(this.model);
 	}
-	
+
 	/**
 	 * Loads a previously created model from memory
 	 * @param filepath Path to location where model can be loaded

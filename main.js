@@ -10,6 +10,7 @@ var winPercentageOn = false;
 var pulseOn = false;
 var closePlayNow = false;
 var model;
+var databaseModelName = 'model1';
 
 model = new NeuralNetLearner();
 createOrLoadModel();
@@ -33,60 +34,73 @@ window.onload = function () {
 };
 
 function createOrLoadModel() {
-    if (not in database)
-      // parameters: input, output, hidden layers, activation function, learning rate
-      model.createModel(65, 1, [65, 65], 'sigmoid', 0.3);
-    else {
-      jsonString = get from database;
-      model.loadFromJsonString(jsonString);
-    }  
+
+    var db = firebase.firestore();
+
+    db.collection(databaseModelName).get().then((querySnapshot) => {
+      if (querySnapshot.empty)
+        // parameters: input, output, hidden layers, activation function, learning rate
+        model.createModel(65, 1, [65, 65], 'sigmoid', 0.3);
+      else {
+        console.log('exists!');
+        // jsonString = get from database;
+        // model.loadFromJsonString(jsonString);
+      }
+
+        // querySnapshot.forEach((doc) => {
+        // arff += `${doc.data().state}` + '\n';
+    });
+
 }
+
+
 
 function run() {
-    document.getElementById("output0").innerHTML = 'Training Started!';
-    if (!isRunning && !isPlaying) {
-        isRunning = true;
-	isDrawing=false;
-        oneBatchRun();
-    }
-    else {
-        document.getElementById("output0").innerHTML = 'Game Already Running';
-    }
+  document.getElementById("output0").innerHTML = 'Training Started!';
+  oneBatchRun();
+  // if (!isRunning && !isPlaying) {
+  //   isRunning = true;
+  //   isDrawing = false;
+  //
+  // } else {
+  //   document.getElementById("output0").innerHTML = 'Game Already Running';
+  // }
 }
 
-function terminate() {
-    if (isRunning) {
-        closeNow = true;
-    }
-}
+// function terminate() {
+//     if (isRunning) {
+//         closeNow = true;
+//     }
+// }
 
 
 
 var returns = 0;
-var numGamesPerBatch = 10;
+var numGamesPerBatch = 1;
 var numGamesRunning;
 var running = false;
 //RUN GMAE
 function oneBatchRun() {
-    numGamesRunning = numGamesPerBatch;
+    // numGamesRunning = ;
     returns = 0;
-    for (var i = 0; i < numGamesRunning; ++i) {
-        runGameSync();
+    for (var i = 0; i < numGamesPerBatch; ++i) {
+      runGameSync();
     }
-    if (closeNow) {
-        isRunning = false;
-        closeNow = false;
-	isDrawing=true;
-        document.getElementById("output0").innerHTML = 'Terminated';
-        //TO DO any last data collection
-
-    }
-    else {
-        setTimeout(oneBatchRun, 10);//wait 10 seconds to allow UI to update
-    }
+    // if (closeNow) {
+    //     isRunning = false;
+    //     closeNow = false;
+	  //      isDrawing=true;
+    //     document.getElementById("output0").innerHTML = 'Terminated';
+    //     //TO DO any last data collection
+    //
+    // }
+    // else {
+    //     setTimeout(oneBatchRun, 10);//wait 10 seconds to allow UI to update
+    // }
 }
 function runGameSync() {
-    executeGame();
+    app.startNewGameTrain(model);
+    // executeGame();
     processTrainingData();
     save();
     pulseStuff();
@@ -98,9 +112,10 @@ function runGameSync() {
 }
 
 //TO DO
-function executeGame() {
-   app.startNewGameTrain(model);
-}
+// function executeGame() {
+//   console.log(model);
+//
+// }
 
 function processTrainingData() {
 
