@@ -85,23 +85,25 @@ function getDataFromDB() {
 
   if (typeof window.lastTimeSaved !== 'undefined'){
     db.collection(window.databaseName).where('timestamp', '>', window.lastTimeSaved).limit(100).get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
+      querySnapshot.docs.forEach((doc) => {
         data.push(doc.data().state);
-      }).catch(err => {
-        console.log(err);
       });
+      console.log(data);
+      return data;
+    }).catch(err => {
+        console.log(err);
     });
   } else {
     db.collection(window.databaseName).limit(100).get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
+      querySnapshot.docs.forEach((doc) => {
         data.push(doc.data().state);
-      }).catch(err => {
-        console.log(err);
       });
+      console.log(data);
+      return data;
+    }).catch(err => {
+        console.log(err);
     });
   }
-
-  return data;
 }
 
 function saveModelToDB() {
