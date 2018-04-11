@@ -85,23 +85,48 @@ function getDataFromDB() {
   var data = [];
 
   if (typeof window.lastTimeSaved !== 'undefined'){
+<<<<<<< HEAD
     return db.collection(window.databaseName).where('timestamp', '>', window.lastTimeSaved).get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         data.push(doc.data().state);
       })
       return data;
+=======
+    db.collection(window.databaseName).where('timestamp', '>', window.lastTimeSaved).limit(100).get().then((querySnapshot) => {
+      querySnapshot.docs.forEach((doc) => {
+        data.push(doc.data().state);
+      });
+      console.log(data);
+      return data;
+    }).catch(err => {
+        console.log(err);
+>>>>>>> 6466b701110ab237bbb0a4785b6d35a81ef64bd9
     });
 
   } else {
+<<<<<<< HEAD
     return db.collection(window.databaseName).limit(100).get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         data.push(doc.data().state);
       })
       return data;
+=======
+    db.collection(window.databaseName).limit(100).get().then((querySnapshot) => {
+      querySnapshot.docs.forEach((doc) => {
+        data.push(doc.data().state);
+      });
+      console.log(data);
+      return data;
+    }).catch(err => {
+        console.log(err);
+>>>>>>> 6466b701110ab237bbb0a4785b6d35a81ef64bd9
     });
 
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6466b701110ab237bbb0a4785b6d35a81ef64bd9
 }
 
 function saveModelToDB() {
