@@ -1,6 +1,6 @@
 var othello = {};
 
-window.databaseName = "gamestates8";
+window.databaseName = "gamestates10";
 
 (function () {
   'use strict';

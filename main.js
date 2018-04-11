@@ -42,7 +42,7 @@ function run() {
   app.startNewGameTrain(model, gameDone);
 }
 
-function gameDone() {
+async function gameDone() {
 
   prev = document.getElementById("output0").innerHTML;
   document.getElementById("output0").innerHTML = prev + " DONE.";
@@ -52,7 +52,7 @@ function gameDone() {
     run();
   } else {
     currentGameNum = 0;
-    var data = getDataFromDB();
+    var data = await getDataFromDB();
     window.lastTimeSaved = Date.now();
     var features = data.map((d) => d.slice(0,-1));
     var labels = data.map((d) => d[65]);
@@ -68,20 +68,23 @@ function getDataFromDB() {
   var data = [];
 
   if (typeof window.lastTimeSaved !== 'undefined'){
-    db.collection(window.databaseName).where('timestamp', '>', window.lastTimeSaved).get().then((querySnapshot) => {
+    return db.collection(window.databaseName).where('timestamp', '>', window.lastTimeSaved).get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         data.push(doc.data().state);
       });
+      return data;
     });
+
   } else {
-    db.collection(window.databaseName).get().then((querySnapshot) => {
+    return db.collection(window.databaseName).limit(100).get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         data.push(doc.data().state);
       });
+      return data;
     });
+
   }
 
-  return data;
 }
 
 function saveModelToDB() {
