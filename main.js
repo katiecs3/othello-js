@@ -11,6 +11,8 @@ var pulseOn = false;
 var closePlayNow = false;
 var model;
 var databaseModelName = 'model1';
+var numGamesPerBatch = 10;
+var db = firebase.firestore();
 
 model = new NeuralNetLearner();
 createOrLoadModel();
@@ -19,112 +21,84 @@ window.onload = function () {
     document.getElementById("train").onclick = function (evt) {
         run();
     };
-    document.getElementById("terminate").onclick = function (evt) {
-        terminate();
-    };
-    document.getElementById("pulse").onclick = function (evt) {
-        togglePulse();
-    };
-    document.getElementById("displayPercentage").onclick = function (evt) {
-        toggleWinPercentage();
-    };
-    document.getElementById("displayGeneration").onclick = function (evt) {
-        toggleGeneration();
-    };
 };
 
 function createOrLoadModel() {
-
-    var db = firebase.firestore();
-
-    db.collection(databaseModelName).get().then((querySnapshot) => {
+    db.collection(databaseModelName).orderBy('timestamp', 'desc').limit(1).get().then((querySnapshot) => {
       if (querySnapshot.empty)
         // parameters: input, output, hidden layers, activation function, learning rate
         model.createModel(65, 1, [65, 65], 'sigmoid', 0.3);
       else {
-        console.log('exists!');
-        // jsonString = get from database;
-        // model.loadFromJsonString(jsonString);
+        model.loadModelFromJsonString(querySnapshot.docs[0].data().model);
       }
-
-        // querySnapshot.forEach((doc) => {
-        // arff += `${doc.data().state}` + '\n';
     });
-
 }
 
-
+var currentGameNum = 0;
 
 function run() {
-  document.getElementById("output0").innerHTML = 'Training Started!';
-  oneBatchRun();
-  // if (!isRunning && !isPlaying) {
-  //   isRunning = true;
-  //   isDrawing = false;
-  //
-  // } else {
-  //   document.getElementById("output0").innerHTML = 'Game Already Running';
-  // }
+  prev = document.getElementById("output0").innerHTML;
+  document.getElementById("output0").innerHTML = prev + '<br />Training ' + currentGameNum;
+  app.startNewGameTrain(model, gameDone);
 }
 
-// function terminate() {
-//     if (isRunning) {
-//         closeNow = true;
-//     }
-// }
+function gameDone() {
 
+  prev = document.getElementById("output0").innerHTML;
+  document.getElementById("output0").innerHTML = prev + " DONE.";
 
+  currentGameNum++;
+  if (currentGameNum < numGamesPerBatch) {
+    run();
+  } else {
+    currentGameNum = 0;
+    var data = getDataFromDB();
+    window.lastTimeSaved = Date.now();
+    var features = data.map((d) => d.slice(0,-1));
+    var labels = data.map((d) => d[65]);
 
-var returns = 0;
-var numGamesPerBatch = 1;
-var numGamesRunning;
-var running = false;
-//RUN GMAE
-function oneBatchRun() {
-    // numGamesRunning = ;
-    returns = 0;
-    for (var i = 0; i < numGamesPerBatch; ++i) {
-      runGameSync();
-    }
-    // if (closeNow) {
-    //     isRunning = false;
-    //     closeNow = false;
-	  //      isDrawing=true;
-    //     document.getElementById("output0").innerHTML = 'Terminated';
-    //     //TO DO any last data collection
-    //
-    // }
-    // else {
-    //     setTimeout(oneBatchRun, 10);//wait 10 seconds to allow UI to update
-    // }
-}
-function runGameSync() {
-    app.startNewGameTrain(model);
-    // executeGame();
-    processTrainingData();
-    save();
-    pulseStuff();
-    generationStuff();
-    if (winPercentageOn) {
-        percentageStuff(0);
-    }
-    running = false;
+    model.train(features, labels);
+
+    saveModelToDB();
+  }
 }
 
-//TO DO
-// function executeGame() {
-//   console.log(model);
-//
-// }
+function getDataFromDB() {
+  var db = firebase.firestore();
+  var data = [];
 
-function processTrainingData() {
+  if (typeof window.lastTimeSaved !== 'undefined'){
+    db.collection(window.databaseName).where('timestamp', '>', window.lastTimeSaved).get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        data.push(doc.data().state);
+      });
+    });
+  } else {
+    db.collection(window.databaseName).get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        data.push(doc.data().state);
+      });
+    });
+  }
 
+  return data;
 }
 
-function save() {
+function saveModelToDB() {
 
+  // console.log(model);
+  db.collection(databaseModelName).add({
+      model: model.getModelAsJsonString(),
+      timestamp: Date.now()
+  })
+  .then(function(docRef) {
+      console.log("Model written with ID: ", docRef.id);
+  })
+  .catch(function(error) {
+      console.error("Error adding document: ", error);
+  });
 }
-//END TO DO
+
 var pulseDelay = 100;
 var pulseCount = 0;
 function pulseStuff() {
@@ -144,6 +118,7 @@ function pulseStuff() {
         }
     }
 }
+
 var generation = 0;
 function generationStuff() {
     ++generation;
@@ -151,9 +126,11 @@ function generationStuff() {
         document.getElementById("generationOutput").innerHTML = 'generation:' + generation;
     }
 }
+
 function percentageStuff(percentage) {
     document.getElementById("winPercentageOutput").innerHTML = 'Win Percentage:' + percentage;
 }
+
 function togglePulse() {
     if (isRunning) {
         if (pulseOn) {

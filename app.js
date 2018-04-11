@@ -116,7 +116,7 @@ var isDrawing=true;
       startNewGame();
   }
 
-  var minimumDelayForAI = 200;  // milliseconds
+  var minimumDelayForAI = 1;  // milliseconds
   function chooseMoveByAI(gameTree, ai) {
     $('#message').text('Now thinking...');
     setTimeout(
@@ -183,6 +183,7 @@ var isDrawing=true;
       if ($('#repeat-games:checked').length)
         showStat();
       setUpUIToReset();
+      window.gameFinished();
     } else {
       playerTable[gameTree.player](gameTree);
     }
@@ -228,13 +229,14 @@ var isDrawing=true;
     shiftToNewGameTree(O.makeInitialGameTree());
   }
 
-  function startNewGameTrain(model) {
+  function startNewGameTrain(model, endGameCallback) {
     $('#preference-pane :input:not(#repeat-games)')
       .addClass('disabled')
       .attr('disabled', 'disabled');
     playerTable[O.BLACK] = makePlayer(blackPlayerType(), model);
     playerTable[O.WHITE] = makePlayer(whitePlayerType(), model);
     shiftToNewGameTree(O.makeInitialGameTree());
+    window.gameFinished = endGameCallback;
   }
 
   // Startup {{{1
@@ -245,6 +247,7 @@ var isDrawing=true;
   drawGameBoard(O.makeInitialGameBoard(), '-', []);
 
   app.startNewGameTrain = startNewGameTrain
+  app.resetGame = resetGame
 
   //}}}
 })(othello);

@@ -1,6 +1,6 @@
 var othello = {};
 
-var databaseName = "gamestates4";
+window.databaseName = "gamestates8";
 
 (function () {
   'use strict';
@@ -98,7 +98,7 @@ var databaseName = "gamestates4";
 
 @DATA\n`
 
-        db.collection(databaseName).get().then((querySnapshot) => {
+        db.collection(window.databaseName).get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             arff += `${doc.data().state}` + '\n';
         });
@@ -173,33 +173,15 @@ var databaseName = "gamestates4";
       gamestates['black'].reverse().forEach( function(state) {
         state.push(penalty);
         penalty *= .95;
-        var prev = $('#gamestate').text();
-        $('#gamestate').text(prev + '\n' + state);
-        db.collection(databaseName).add({
-            state: state,
-        })
-        .then(function(docRef) {
-            console.log("Document written with ID: ", docRef.id);
-        })
-        .catch(function(error) {
-            console.error("Error adding document: ", error);
-        });
+        printToGamestate(state);
+        saveToDatabase(state);
       });
       penalty = -100;
       gamestates['white'].reverse().forEach( function(state) {
         state.push(penalty);
         penalty *= .95;
-        var prev = $('#gamestate').text();
-        $('#gamestate').text(prev + '\n' + state);
-        db.collection(databaseName).add({
-            state: state,
-        })
-        .then(function(docRef) {
-            console.log("Document written with ID: ", docRef.id);
-        })
-        .catch(function(error) {
-            console.error("Error adding document: ", error);
-        });
+        printToGamestate(state);
+        saveToDatabase(state);
       });
     } else {
       var loser = (winner === "black") ? "white" : "black";
@@ -208,34 +190,16 @@ var databaseName = "gamestates4";
       gamestates[winner].reverse().forEach( function(state) {
         state.push(reward);
         reward *= .95;
-        var prev = $('#gamestate').text();
-        $('#gamestate').text(prev + '\n' + state);
-        db.collection(databaseName).add({
-            state: state,
-        })
-        .then(function(docRef) {
-            console.log("Document written with ID: ", docRef.id);
-        })
-        .catch(function(error) {
-            console.error("Error adding document: ", error);
-        });
+        printToGamestate(state);
+        saveToDatabase(state);
       });
 
       var penalty = -100
       gamestates[loser].reverse().forEach( function(state) {
         state.push(penalty);
         penalty *= .95;
-        var prev = $('#gamestate').text();
-        $('#gamestate').text(prev + '\n' + state);
-        db.collection(databaseName).add({
-            state: state,
-        })
-        .then(function(docRef) {
-            console.log("Document written with ID: ", docRef.id);
-        })
-        .catch(function(error) {
-            console.error("Error adding document: ", error);
-        });
+        printToGamestate(state);
+        saveToDatabase(state);
       });
     }
 
@@ -244,6 +208,26 @@ var databaseName = "gamestates4";
     latestGamestate = [];
     latestPlayer = [];
 
+  }
+
+  function printToGamestate(state) {
+    // var prev = $('#gamestate').text();
+    // $('#gamestate').text(prev + '\n' + state);
+  }
+
+  function saveToDatabase(item) {
+
+
+    db.collection(window.databaseName).add({
+        state: item,
+        timestamp: Date.now()
+    })
+    .then(function(docRef) {
+        //console.log("Document written with ID: ", docRef.id);
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
   }
 
   function saveGameState(x,y) {
