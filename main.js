@@ -38,7 +38,7 @@ var currentGameNum = 0;
 
 function run() {
   prev = document.getElementById("output0").innerHTML;
-  document.getElementById("output0").innerHTML = prev + '<br />Training ' + currentGameNum;
+  document.getElementById("output0").innerHTML = prev + '<br />Training ' + currentGameNum + '...';
   app.startNewGameTrain(model, gameDone);
 }
 
@@ -86,6 +86,9 @@ function getDataFromDB() {
 
 function saveModelToDB() {
 
+  prev = document.getElementById("output0").innerHTML;
+  document.getElementById("output0").innerHTML = prev + "<br />Saving model to database... ";
+
   // console.log(model);
   db.collection(databaseModelName).add({
       model: model.getModelAsJsonString(),
@@ -93,6 +96,8 @@ function saveModelToDB() {
   })
   .then(function(docRef) {
       console.log("Model written with ID: ", docRef.id);
+      prev = document.getElementById("output0").innerHTML;
+      document.getElementById("output0").innerHTML = prev + "DONE.";
   })
   .catch(function(error) {
       console.error("Error adding document: ", error);
