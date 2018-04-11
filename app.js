@@ -1,10 +1,11 @@
 var app = {};
-
+var isDrawing=true;
 (function (O) {
   'use strict';
   // UI {{{1
 
   function drawGameBoard(board, player, moves) {
+    if(!isDrawing)return;
     var ss = [];
     var attackable = [];
     moves.forEach(function (m) {

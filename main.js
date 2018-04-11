@@ -31,6 +31,7 @@ function run() {
     document.getElementById("output0").innerHTML = 'Training Started!';
     if (!isRunning && !isPlaying) {
         isRunning = true;
+	isDrawing=false;
         oneBatchRun();
     }
     else {
@@ -60,6 +61,7 @@ function oneBatchRun() {
     if (closeNow) {
         isRunning = false;
         closeNow = false;
+	isDrawing=true;
         document.getElementById("output0").innerHTML = 'Terminated';
         //TO DO any last data collection
 
