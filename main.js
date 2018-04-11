@@ -57,14 +57,14 @@ function gameDone() {
     run();
   } else {
     currentGameNum = 0;
-    /*var data = getDataFromDB();
+    var data = getDataFromDB();
     window.lastTimeSaved = Date.now();
     var features = data.map((d) => d.slice(0,-1));
     var labels = data.map((d) => d[65]);
 
     model.train(features, labels);
 
-    saveModelToDB();*/
+    saveModelToDB();
     if(closeNow){
 	closeNow=false;
 	isRunning=false;
