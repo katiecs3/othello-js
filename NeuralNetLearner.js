@@ -23,9 +23,9 @@ class NeuralNetLearner {
 	 */
 	createModel(numInputs, numOutputs, hiddenLayers, activationFunction, learningRate) {
 		this.model = [];
-		let inputs = hiddenLayers.splice();
+		let inputs = hiddenLayers.slice();
 		inputs.unshift(numInputs + 1); // Add one for bias
-		let layers = hiddenLayers.splice();
+		let layers = hiddenLayers.slice();
 		layers.push(numOutputs);
 		for(let l = 0; l < layers.length; l++) {
 			let layer = new Layer(inputs[l], layers[l], activationFunction, learningRate);
@@ -60,6 +60,7 @@ class NeuralNetLearner {
 		let bestModel = null;
 
 		console.log("Training begin")
+		console.log(features);
 		let startTime = Date.now();
 		while(continueTrain) {
 			// Train on each instance of the training set
@@ -87,7 +88,7 @@ class NeuralNetLearner {
 			}
 			else {
 				bestModel = Object.assign({}, model);
-				if (epochs > 50)
+				if (epochs >= 5)
 					continueTrain = false;
 			}
 
