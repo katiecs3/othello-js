@@ -197,9 +197,10 @@ var isDrawing=true;
       s.b++;
       O.recordData('black');
     }
-    if (r === 0)
+    if (r === 0) {
       s.d++;
       O.recordData('draw');
+    }
     if (r === -1) {
       s.w++;
       O.recordData('white');

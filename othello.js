@@ -169,7 +169,6 @@ var databaseName = "gamestates4";
   function recordData(winner) {
 
     if(winner === "draw") {
-      console.log("Draw");
       var penalty = -100;
       gamestates['black'].reverse().forEach( function(state) {
         state.push(penalty);
@@ -204,7 +203,6 @@ var databaseName = "gamestates4";
       });
     } else {
       var loser = (winner === "black") ? "white" : "black";
-      console.log("Winner: ", winner, "  Loser: ", loser);
 
       var reward = 100;
       gamestates[winner].reverse().forEach( function(state) {
