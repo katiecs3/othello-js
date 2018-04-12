@@ -24,7 +24,7 @@ class NeuralNetLearner {
 	createModel(numInputs, numOutputs, hiddenLayers, activationFunction, learningRate) {
 		this.model = [];
 		let inputs = hiddenLayers.slice();
-		inputs.unshift(numInputs + 1); // Add one for bias
+		inputs.unshift(numInputs);
 		let layers = hiddenLayers.slice();
 		layers.push(numOutputs);
 		for(let l = 0; l < layers.length; l++) {
@@ -112,7 +112,6 @@ class NeuralNetLearner {
 		let layerOutput = instance.slice();
 		layerOutput.push(1); // Add bias
 		for (let l = 0; l < this.model.length; l++) {
-			console.log("layerOutput", layerOutput);
 			var layer = this.model[l];
 			layerOutput = layer.setInput(layerOutput);
 		}

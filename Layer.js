@@ -10,7 +10,7 @@ class Layer {
 	 * @param activationFunction String name for the activation function to be used in this layer. Currently only supports 'sigmoid'
 	 */
 	constructor(inputs, nodes, activationFunction, learningRate) {
-		this.numInputs = inputs;
+		this.numInputs = inputs + 1; // Add one for bias
 		this.numNodes = nodes;
 		this.C = learningRate;
 		this.activationFunction = activationFunction;
@@ -91,6 +91,13 @@ class Layer {
 			this.weights.push(nodeWeights);
 		}
 	}
+	
+	coordStringToInt(coord) {
+	let bits = coord.split("-");
+	let num = 0;
+	num = (parseInt(bits[0]) - 1) * 8 + (parseInt(bits[1] - 1));
+	return num;
+	}
 
 	/**
 	 * Prepare output of nodes of this layer given input from previous layer
@@ -111,9 +118,10 @@ class Layer {
 			let net = 0;
 			let nodeWeights = this.weights[n];
 			for (let i = 0; i < nodeWeights.length; i++) {
-				net += nodeWeights[i] * input[i];
+				if (typeof this.myInput[i] == "string")
+					this.myInput[i] = this.coordStringToInt(this.myInput[i]);
+				net += nodeWeights[i] * this.myInput[i];
 			}
-			console.log(net);
 			this.myOutput[n] = this.activate(net);
 		}
 		return this.myOutput;

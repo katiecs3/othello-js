@@ -6,7 +6,7 @@ var setSettingsString = 'Set Settings';
 var pulsed = false;
 var closeNow = false;
 var model = new NeuralNetLearner();
-var databaseModelName = 'model2';
+var databaseModelName = 'model4';
 var numGamesPerBatch = 10;
 var db = firebase.firestore();
 // var numGamesPlayed=0;
@@ -49,13 +49,6 @@ function run() {
   app.startNewGameTrain(model, gameDone);
 }
 
-function coordStringToInt(coord) {
-	let bits = coord.split("-");
-	let num = 0;
-	num = (int(bits[0]) - 1) * 8 + (int(bits[1] - 1));
-	return num;
-}
-
 
 async function gameDone() {
   // ++numGamesPlayed;
@@ -74,14 +67,6 @@ async function gameDone() {
     var features = data.map((d) => d.slice(0,-1));
     var labels = data.map((d) => d[65]);
 
-	console.log("WE ARE HERE");
-	console.log(features);
-	console.log(labels);
-	for (let f = 0; f < features.length; f++) {
-		console.log("what");
-		features[f][64] = this.coordStringToInt(features[f][64]);
-	}
-	
     model.train(features, labels);
 
     saveModelToDB();
