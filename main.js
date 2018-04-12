@@ -7,7 +7,7 @@ var model = new NeuralNetLearner();
 var databaseModelName = 'model6';
 var numGamesPerBatch = 1;
 var db = firebase.firestore();
- var numGamesPlayed = 0;
+var numGamesPlayed = 0;
 
 createOrLoadModel();
 
@@ -25,7 +25,7 @@ function createOrLoadModel() {
 //      if (querySnapshot.empty) {
 //        console.log("Creating new model...");
 //        // parameters: in, out, layers, activation, learning rate
-        model.createModel(65, 1, [65, 65], 'sigmoid', 4);
+        model.createModel(65, 1, [65], 'sigmoid', 0.1);
 //      }
 //     else {
 //        console.log("Loading model...");

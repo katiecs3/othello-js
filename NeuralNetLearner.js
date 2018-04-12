@@ -51,9 +51,16 @@ class NeuralNetLearner {
 			console.log("Training requires that each feature set have matching labels")
 			return;
 		}
-		
-		console.log(features);
 
+		// Normalize labels
+		let max = 100;
+		let min = -100;
+		for (let i = 0; i < labels.length; i++) {
+			let val = labels[i][0];
+			let norm = (val - min)/(max - min);
+			labels[i][0] = norm;
+		}
+		
 		let epochs = 0;
 		let continueTrain = true;
 		let bestSSE = Infinity;
@@ -89,12 +96,11 @@ class NeuralNetLearner {
 			}
 			else {
 				bestModel = Object.assign({}, this.model);
-				if (epochs >= 5)
+				if (epochs >= 6)
 					continueTrain = false;
 			}
 
 			// Report epoch
-			console.log("  Finished epoch " + epochs + ", SSE: " + SSE);
 
 		}
 		console.log("Training ended after " + (Date.now() - startTime)/1000 + " seconds")
