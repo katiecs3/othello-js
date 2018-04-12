@@ -13,15 +13,7 @@ class Layer {
 		this.numInputs = inputs;
 		this.numNodes = nodes;
 		this.C = learningRate;
-		switch(activationFunction) {
-			case 'sigmoid':
-				this.activate = this.sigmoid;
-				this.derivative = this.derivativeSigmoid;
-				break;
-			default:
-				console.log('Unsupported activation function');
-				break;
-		}
+		this.activationFunction = activationFunction;
 		this.weights = [];
 		this.myInput = new Array(this.numInputs);
 		this.myOutput = new Array(this.numNodes + 1);
@@ -30,6 +22,21 @@ class Layer {
 		this.myError = new Array(this.numNodes);
 		this.initializeWeights();
 	}
+	
+	/**
+	 * Layer copy constructor. Used when recreating model from JSON string
+	 * @param object Layer object as object
+	 */
+	copyConstructor(object) {
+		this.numInputs = object.numInputs;
+		this.numNodes = object.numNodes;
+		this.C = object.C;
+		this.activationFunction = object.activationFunction;
+		this.weights = object.weights;
+		this.myInput = object.myInput;
+		this.myOutput = object.myOutput;
+		this.myError = object.myError;
+	}
 
 	/**
 	 * @return Number of nodes in this layer, including bias node
@@ -37,6 +44,20 @@ class Layer {
 	getNodes() {
 		// Add one to account for bias node
 		return numNodes + 1;
+	}
+	
+	activate(net) {
+		switch(this.activationFunction) {
+			default:
+				return this.sigmoid(net);
+		}
+	}
+	
+	derivative(out) {
+		switch(this.activationFunction) {
+			default:
+				return this.derivativeSigmoid(out);
+		}
 	}
 
 	/**
@@ -92,7 +113,8 @@ class Layer {
 			for (let i = 0; i < nodeWeights.length; i++) {
 				net += nodeWeights[i] * input[i];
 			}
-			this.myOutput[n] = activate(net);
+			console.log(net);
+			this.myOutput[n] = this.activate(net);
 		}
 		return this.myOutput;
 	}
@@ -124,7 +146,7 @@ class Layer {
 		for (let n = 0; n < this.numNodes; n++) {
 			let nodeError = target[n];
 			let nodeWeights = this.weights[n];
-			nodeError *= derivative(this.myOutput[n]);
+			nodeError *= this.derivative(this.myOutput[n]);
 			this.myError[n] = nodeError;
 		}
 

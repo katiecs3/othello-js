@@ -60,14 +60,18 @@ class NeuralNetLearner {
 		let bestModel = null;
 
 		console.log("Training begin")
-		console.log(features);
+		console.log(this.model);
+		for (let l  = 0; l < this.model.length; l++) {
+			console.log(this.model[l]);
+		}
 		let startTime = Date.now();
 		while(continueTrain) {
 			// Train on each instance of the training set
 			let SSE = 0;
-			for (let f = 0; f < features; f++) {
-				this.getModelOutput(features[f]);
-				SSE += this.calculateSSE(labels[f], true);
+			for (let f = 0; f < features.length; f++) {
+				var x = this.getModelOutput(features[f]);
+				console.log(x);
+				SSE += this.calculateError(labels[f], true);
 			}
 
 			// Test stopping criteria
@@ -77,7 +81,7 @@ class NeuralNetLearner {
 				if (validationSSE < bestSSE) {
 					epochsSinceSSE = 0;
 					bestSSE = validationSSE;
-					bestModel = Object.assign({}, model);
+					bestModel = Object.assign({}, this.model);
 				}
 				else {
 					epochsSinceImprovement++;
@@ -87,7 +91,7 @@ class NeuralNetLearner {
 				}
 			}
 			else {
-				bestModel = Object.assign({}, model);
+				bestModel = Object.assign({}, this.model);
 				if (epochs >= 5)
 					continueTrain = false;
 			}
@@ -107,8 +111,10 @@ class NeuralNetLearner {
 	getModelOutput(instance) {
 		let layerOutput = instance.slice();
 		layerOutput.push(1); // Add bias
-		for (let l = 0; l < model.length; l++) {
-			layerOutput = model[l].setInput(layerOutput);
+		for (let l = 0; l < this.model.length; l++) {
+			console.log("layerOutput", layerOutput);
+			var layer = this.model[l];
+			layerOutput = layer.setInput(layerOutput);
 		}
 		return layerOutput;
 	}
@@ -120,13 +126,14 @@ class NeuralNetLearner {
 	 * @return The SSE in the model for the current instance
 	 */
 	calculateError(target, changeWeight) {
+		console.log("Calc error");
 		let layerTarget = target;
 		let SSE = 0;
-		for (let l = model.length - 1; l <= 0; l--) {
-			layerTarget = model[l].backpropError(layerTarget);
+		for (let l = this.model.length - 1; l <= 0; l--) {
+			layerTarget = this.model[l].backpropError(layerTarget);
 			if (changeWeight)
-				model[l].adjustWeights();
-			SSE += model[l].getSSE();
+				this.model[l].adjustWeights();
+			SSE += this.model[l].getSSE();
 		}
 		return SSE;
 	}
@@ -172,7 +179,7 @@ class NeuralNetLearner {
 		let SSE = 0;
 		for (let f = 0; f < features; f++) {
 			this.getModelOutput(features[f]);
-			SSE += this.calculateSSE(labels[f], true);
+			SSE += this.calculateError(labels[f], false);
 		}
 		return SSE;
 	}
@@ -199,9 +206,15 @@ class NeuralNetLearner {
 
 	/**
 	 * Loads a previously created model from memory
-	 * @param filepath Path to location where model can be loaded
+	 * @param jsonString Json string representing model
 	 */
 	loadModelFromJsonString(jsonString) {
 		this.model = JSON.parse(jsonString);
+		for (let l = 0; l < this.model.length; l++) {
+			let layer = new Layer(0,0,0,0)
+			layer.copyConstructor(this.model[l]);
+			this.model[l] = layer;
+		}
+		console.log(this.model);
 	}
 }

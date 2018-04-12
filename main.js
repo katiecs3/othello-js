@@ -29,7 +29,7 @@ function createOrLoadModel() {
         // parameters: in, out, layers, activation, learning rate
         model.createModel(65, 1, [65, 65], 'sigmoid', 0.3);
       }
-      else {
+     else {
         console.log("Loading model...");
         model.loadModelFromJsonString(querySnapshot.docs[0].data().model);
         console.log("done.");
@@ -49,6 +49,14 @@ function run() {
   app.startNewGameTrain(model, gameDone);
 }
 
+function coordStringToInt(coord) {
+	let bits = coord.split("-");
+	let num = 0;
+	num = (int(bits[0]) - 1) * 8 + (int(bits[1] - 1));
+	return num;
+}
+
+
 async function gameDone() {
   // ++numGamesPlayed;
   prev = document.getElementById("output0").innerHTML;
@@ -66,6 +74,14 @@ async function gameDone() {
     var features = data.map((d) => d.slice(0,-1));
     var labels = data.map((d) => d[65]);
 
+	console.log("WE ARE HERE");
+	console.log(features);
+	console.log(labels);
+	for (let f = 0; f < features.length; f++) {
+		console.log("what");
+		features[f][64] = this.coordStringToInt(features[f][64]);
+	}
+	
     model.train(features, labels);
 
     saveModelToDB();
