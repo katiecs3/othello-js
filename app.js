@@ -195,19 +195,20 @@ var isDrawing=true;
   function recordStat(board) {
     var s = stats[[blackPlayerType(), whitePlayerType()]] || {b: 0, w: 0, d: 0};
     var r = O.judge(board);
+	window.stat.history.push(r);
     if (r === 1) {
       s.b++;
-	  window.stat.b++;
+	  window.stat.win++;
       O.recordData('black');
     }
     if (r === 0) {
       s.d++;
-	  window.stat.d++;
+	  window.stat.tie++;
       O.recordData('draw');
     }
     if (r === -1) {
       s.w++;
-	  window.stat.w++;
+	  window.stat.loss++;
       O.recordData('white');
     }
     stats[[blackPlayerType(), whitePlayerType()]] = s;

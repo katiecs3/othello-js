@@ -68,7 +68,6 @@ class NeuralNetLearner {
 		let noImprovementThreshold = 5;
 		let bestModel = null;
 
-		console.log("Training begin");
 		let startTime = Date.now();
 		while(continueTrain) {
 			// Train on each instance of the training set
@@ -96,14 +95,14 @@ class NeuralNetLearner {
 			}
 			else {
 				bestModel = Object.assign({}, this.model);
-				if (epochs >= 6)
+				if (epochs >= 20)
 					continueTrain = false;
 			}
 
 			// Report epoch
 
 		}
-		console.log("Training ended after " + (Date.now() - startTime)/1000 + " seconds")
+		//console.log("Training ended after " + (Date.now() - startTime)/1000 + " seconds")
 	}
 
 	/**

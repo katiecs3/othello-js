@@ -8,7 +8,7 @@ var databaseModelName = 'model6';
 var numGamesPerBatch = 1;
 var db = firebase.firestore();
 var numGamesPlayed = 0;
-window.stat = {b: 0, w: 0, d: 0};
+window.stat = {win:0, loss: 0, tie: 0, history: []};
 createOrLoadModel();
 
 window.onload = function () {
@@ -76,12 +76,26 @@ function run() {
 //  }
 //}
 
+function getStatSummary(recent) {
+  let rWin = 0;
+  
+  for (let i = window.stat.history.length - recent; i < window.stat.history.length; i++) {
+	if (window.stat.history[i] === 1) {
+	  rWin++;
+	}
+  }
+	
+  return (rWin/recent) * 100;
+}
+
 function gameDone() {
   ++numGamesPlayed;
   prev = document.getElementById("output0").innerHTML;
   document.getElementById("output0").innerHTML = prev + " DONE.";
   document.getElementById("gamesTrainedCounter").innerHTML='Number of Games trained--'+numGamesPlayed+'\n';
-  $('#stats').text('Black: ' + window.stat.b + ', White: ' + window.stat.w + ', Draw: ' + window.stat.d);
+  // Stats
+  $('#stats').text('Wins: ' + window.stat.win + ', losses: ' + window.stat.loss + ', ties: ' + window.stat.tie + '\n' +
+    ', win%: ' + (window.stat.win/window.stat.history.length) * 100 + ', last 10 games win%: ' + getStatSummary(10));
 
   currentGameNum++;
   if (currentGameNum < numGamesPerBatch) {
@@ -98,6 +112,7 @@ function gameDone() {
     if(closeNow){
      	closeNow=false;
      	isRunning=false;
+		console.log(window.stat.history);
     	return;
     }
     setTimeout(run,10);
@@ -136,7 +151,7 @@ function saveModelToDB() {
       timestamp: Date.now()
   })
   .then(function(docRef) {
-      console.log("Model written with ID: ", docRef.id);
+      //console.log("Model written with ID: ", docRef.id);
       prev = document.getElementById("output0").innerHTML;
       document.getElementById("output0").innerHTML = prev + "DONE.";
   })
