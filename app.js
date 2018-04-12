@@ -5,7 +5,8 @@ var isDrawing=true;
   // UI {{{1
 
   function drawGameBoard(board, player, moves) {
-    if(!isDrawing)return;
+    if(!isDrawing)
+		return;
     var ss = [];
     var attackable = [];
     moves.forEach(function (m) {

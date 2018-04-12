@@ -216,18 +216,17 @@ window.databaseName = "gamestates10";
   }
 
   function saveToDatabase(item) {
-
-
-    db.collection(window.databaseName).add({
-        state: item,
-        timestamp: Date.now()
-    })
-    .then(function(docRef) {
-        //console.log("Document written with ID: ", docRef.id);
-    })
-    .catch(function(error) {
-        console.error("Error adding document: ", error);
-    });
+	window.lastState = item;
+//    db.collection(window.databaseName).add({
+//        state: item,
+//        timestamp: Date.now()
+//    })
+//    .then(function(docRef) {
+//        //console.log("Document written with ID: ", docRef.id);
+//    })
+//    .catch(function(error) {
+//        console.error("Error adding document: ", error);
+//    });
   }
 
   function saveGameState(x,y) {
@@ -790,7 +789,7 @@ window.databaseName = "gamestates10";
     });
 
     newBoard.push(possibleMove);
-    return neuralNet.predict(newBoard);
+    return [neuralNet.predict(newBoard)[0], move];
   }
 
   function makeQLearnerAI(model){
@@ -803,22 +802,13 @@ window.databaseName = "gamestates10";
           });
 
         var scores = potentialMoves.map(function(move) {
-          return move[65];
-        })
+          return move[0];
+        });
 
         var maxScoreIndex = Math.max(...scores);
-        var bestMove = potentialMoves[scores.indexOf(maxScoreIndex)][64];
+        var bestMove = potentialMoves[scores.indexOf(maxScoreIndex)][1];
 
-        if( bestMove == "PASS") {
-          return gameTree.moves[0];
-        } else {
-          return gameTree.moves.find((move) => {
-            if(move.x == bestMove[0] && move.y == bestMove[2]) {
-              return move;
-            }
-          });
-        }
-
+        return bestMove;
       }
     }
   }

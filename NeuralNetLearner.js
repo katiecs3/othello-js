@@ -51,6 +51,8 @@ class NeuralNetLearner {
 			console.log("Training requires that each feature set have matching labels")
 			return;
 		}
+		
+		console.log(features);
 
 		let epochs = 0;
 		let continueTrain = true;
@@ -59,19 +61,14 @@ class NeuralNetLearner {
 		let noImprovementThreshold = 5;
 		let bestModel = null;
 
-		console.log("Training begin")
-		console.log(this.model);
-		for (let l  = 0; l < this.model.length; l++) {
-			console.log(this.model[l]);
-		}
+		console.log("Training begin");
 		let startTime = Date.now();
 		while(continueTrain) {
 			// Train on each instance of the training set
 			let SSE = 0;
 			for (let f = 0; f < features.length; f++) {
 				var x = this.getModelOutput(features[f]);
-				console.log(x);
-				SSE += this.calculateError(labels[f], true);
+				SSE += this.calculateError(x, labels[f], true);
 			}
 
 			// Test stopping criteria
@@ -124,11 +121,13 @@ class NeuralNetLearner {
 	 * @param changeWeight Whether or not the models weights should change. True if training, false on validation
 	 * @return The SSE in the model for the current instance
 	 */
-	calculateError(target, changeWeight) {
-		console.log("Calc error");
-		let layerTarget = target;
+	calculateError(output, target, changeWeight) {
+		let layerTarget = [];
+		for (let t = 0; t < target.length; t++) {
+			layerTarget.push(target[t] - output[t]);
+		}
 		let SSE = 0;
-		for (let l = this.model.length - 1; l <= 0; l--) {
+		for (let l = this.model.length - 1; l >= 0; l--) {
 			layerTarget = this.model[l].backpropError(layerTarget);
 			if (changeWeight)
 				this.model[l].adjustWeights();

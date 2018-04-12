@@ -84,19 +84,21 @@ class Layer {
 		for (let n = 0; n < this.numNodes; n++) {
 			let nodeWeights = [];
 			// Each input gets a random weight
-			for (let i = 0; i < this.numNodes; i++) {
-				// Add a random weight between -0.1 and 0.1
-				nodeWeights.push(Math.random()/5 - 0.1);
+			for (let i = 0; i < this.numInputs; i++) {
+				// Add a random weight between -1 and 1
+				nodeWeights.push(Math.random()*2 - 1);
 			}
 			this.weights.push(nodeWeights);
 		}
 	}
 	
 	coordStringToInt(coord) {
-	let bits = coord.split("-");
-	let num = 0;
-	num = (parseInt(bits[0]) - 1) * 8 + (parseInt(bits[1] - 1));
-	return num;
+		if (coord === "PASS")
+			return -1;
+		let bits = coord.split("-");
+		let num = 0;
+		num = (parseInt(bits[0]) - 1) * 8 + (parseInt(bits[1] - 1));
+		return num;
 	}
 
 	/**
@@ -145,7 +147,7 @@ class Layer {
 	 */
 	backpropError(target) {
 		// Ensure that number of inputs matches expected
-		if (error.length != this.numInputs) {
+		if (target.length != this.numNodes) {
 			console.log("Unexpected number of inputs");
 			return null;
 		}
@@ -153,14 +155,13 @@ class Layer {
 		// The error for each node in this layer is it's target
 		for (let n = 0; n < this.numNodes; n++) {
 			let nodeError = target[n];
-			let nodeWeights = this.weights[n];
 			nodeError *= this.derivative(this.myOutput[n]);
 			this.myError[n] = nodeError;
 		}
 
 		// Find target of previous layer using the weights
 		let previousLayerTarget = [];
-		for (let i = 0; i < this.numInputs; i++) {
+		for (let i = 0; i < this.numInputs - 1; i++) {
 			let nodeTarget = 0;
 			// Input node's target is weighted error of each node in this layer
 			for (let n = 0; n < this.numNodes; n++) {
@@ -178,7 +179,7 @@ class Layer {
 	 */
 	adjustWeights() {
 		for (let n = 0; n < this.numNodes; n++) {
-			for (let i = 0; i < nodeWeights.length; i++) {
+			for (let i = 0; i < this.numInputs; i++) {
 				let deltaWeight = this.C * this.myInput[i] * this.myError[n];
 				this.weights[n][i] += deltaWeight;
 			}
@@ -191,7 +192,7 @@ class Layer {
 	 */
 	getSSE() {
 		let SSE = 0;
-		for (let n = 0; n < numNodes; n++) {
+		for (let n = 0; n < this.numNodes; n++) {
 			SSE += Math.pow(this.myError[n], 2);
 		}
 		return SSE;
