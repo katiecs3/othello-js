@@ -167,7 +167,7 @@ window.databaseName = "gamestates10";
   var latestPlayer = [];
 
   function recordData(winner) {
-
+	window.lastState = [];
     if(winner === "draw") {
       var penalty = -100;
       gamestates['black'].reverse().forEach( function(state) {
@@ -216,7 +216,7 @@ window.databaseName = "gamestates10";
   }
 
   function saveToDatabase(item) {
-	window.lastState = item;
+	window.lastState.push(item);
 //    db.collection(window.databaseName).add({
 //        state: item,
 //        timestamp: Date.now()
