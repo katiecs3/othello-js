@@ -197,14 +197,17 @@ var isDrawing=true;
     var r = O.judge(board);
     if (r === 1) {
       s.b++;
+	  window.stat.b++;
       O.recordData('black');
     }
     if (r === 0) {
       s.d++;
+	  window.stat.d++;
       O.recordData('draw');
     }
     if (r === -1) {
       s.w++;
+	  window.stat.w++;
       O.recordData('white');
     }
     stats[[blackPlayerType(), whitePlayerType()]] = s;

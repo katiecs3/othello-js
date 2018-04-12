@@ -8,7 +8,7 @@ var databaseModelName = 'model6';
 var numGamesPerBatch = 1;
 var db = firebase.firestore();
 var numGamesPlayed = 0;
-
+window.stat = {b: 0, w: 0, d: 0};
 createOrLoadModel();
 
 window.onload = function () {
@@ -81,6 +81,7 @@ function gameDone() {
   prev = document.getElementById("output0").innerHTML;
   document.getElementById("output0").innerHTML = prev + " DONE.";
   document.getElementById("gamesTrainedCounter").innerHTML='Number of Games trained--'+numGamesPlayed+'\n';
+  $('#stats').text('Black: ' + window.stat.b + ', White: ' + window.stat.w + ', Draw: ' + window.stat.d);
 
   currentGameNum++;
   if (currentGameNum < numGamesPerBatch) {
